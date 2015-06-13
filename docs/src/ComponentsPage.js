@@ -55,6 +55,16 @@ const ComponentsPage = React.createClass({
             <div className='row'>
               <div className='col-md-9' role='main'>
 
+                {/* Transitions */}
+                <div className='bs-docs-section'>
+                  <h1 id='transitions' className='page-header'>Transitions <small>Collapse, Fade</small></h1>
+                  <h2 id='transitions-collapse'>Collapse</h2>
+                  <ReactPlayground codeText={Samples.Collapse} />
+
+                  <h2 id='transitions-fade'>Fade</h2>
+                  <ReactPlayground codeText={Samples.Fade} />
+                </div>
+
                 {/* Buttons */}
                 <div className='bs-docs-section'>
                   <h1 id='buttons' className='page-header'>Buttons <small>Button</small></h1>

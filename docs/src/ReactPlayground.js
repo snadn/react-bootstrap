@@ -6,13 +6,19 @@ import * as modBadge from '../../src/Badge';
 import * as modButton from '../../src/Button';
 import * as modButtonGroup from '../../src/ButtonGroup';
 import * as modButtonInput from '../../src/ButtonInput';
+
 import * as modButtonToolbar from '../../src/ButtonToolbar';
+import * as modCollapse from '../../src/Transitions/Collapse';
+
 import * as modCollapsibleNav from '../../src/CollapsibleNav';
 import * as modCollapsibleMixin from '../../src/CollapsibleMixin';
 import * as modCarousel from '../../src/Carousel';
 import * as modCarouselItem from '../../src/CarouselItem';
 import * as modCol from '../../src/Col';
 import * as modDropdownButton from '../../src/DropdownButton';
+
+import * as modFade from '../../src/Transitions/Fade';
+
 import * as modFormControls from '../../src/FormControls';
 import * as modGlyphicon from '../../src/Glyphicon';
 import * as modGrid from '../../src/Grid';
@@ -51,7 +57,12 @@ import babel from 'babel-core/browser';
 import CodeExample from './CodeExample';
 
 const classNames = modClassNames.default;
+
 /* eslint-disable */
+
+const Collapse = modCollapse.default;
+const Fade = modFade.default;
+
 const React = modReact.default;
 const Accordion = modAccordion.default;
 const Alert = modAlert.default;
