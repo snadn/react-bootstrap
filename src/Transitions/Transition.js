@@ -3,6 +3,14 @@ import React from 'react';
 import TransitionEvents from '../utils/TransitionEvents';
 import classnames from 'classnames';
 
+function omit(obj, keys) {
+  let included = Object.keys(obj).filter( k => keys.indexOf(k) === -1)
+  let newObj = {};
+
+  included.forEach( key => newObj[key] = obj[key] )
+  return newObj;
+}
+
 function ensureTransitionEnd(node, handler, duration){
   let fired = false;
   let done = e => {
@@ -92,6 +100,8 @@ class Transition extends React.Component {
   }
 
   render() {
+    let childProps = omit(this.props, Object.keys(Transition.propTypes).concat('children'));
+
     let child = this.props.children;
     let out = !this.state.in && !this.state.transitioning;
 
@@ -101,6 +111,7 @@ class Transition extends React.Component {
 
     let classes = '';
 
+    // for whatever reason classnames() doesn't actually work here, maybe because they aren't singgle classes?
     if (this.state.in && !this.state.transitioning) {
       classes += this.props.enterClassName;
     }
@@ -118,7 +129,11 @@ class Transition extends React.Component {
     }
 
     return React.cloneElement(child, {
-      className: classnames(child.props.className, this.props.className, classes)
+      ...childProps,
+      className: classnames(
+          child.props.className
+        , this.props.className
+        , classes)
     });
   }
 }

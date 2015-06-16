@@ -42,6 +42,8 @@ class Collapse extends React.Component {
       <Transition
         {...this.props}
         in={this.props.in}
+        aria-expanded={this.props.in}
+        className={this.props.dimension === 'width' ? 'width' : ''}
         exitClassName='collapse'
         exitingClassName='collapsing'
         enterClassName='collapse in'
@@ -78,7 +80,7 @@ class Collapse extends React.Component {
 
 Collapse.propTypes = {
   ...Transition.propTypes,
-  dimension: React.PropTypes.oneOf(['height', 'width']),
+  dimension: React.PropTypes.oneOf(['height', 'width']), //not entirely supported by tbs
   getDimensionValue: React.PropTypes.funcs
 };
 
