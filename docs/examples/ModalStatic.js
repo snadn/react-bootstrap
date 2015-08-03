@@ -1,19 +1,21 @@
+
 const modalInstance = (
   <div className='static-modal'>
-    <Modal title='Modal title'
-      enforceFocus={false}
-      backdrop={false}
-      animation={false}
-      container={mountNode}
-      onRequestHide={function() {}}>
-      <div className='modal-body'>
+    <Modal.Dialog>
+      <Modal.Header>
+        <Modal.Title>Modal title</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
         One fine body...
-      </div>
-      <div className='modal-footer'>
+      </Modal.Body>
+
+      <Modal.Footer>
         <Button>Close</Button>
         <Button bsStyle='primary'>Save changes</Button>
-      </div>
-    </Modal>
+      </Modal.Footer>
+
+    </Modal.Dialog>
   </div>
 );
 

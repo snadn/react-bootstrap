@@ -74,4 +74,105 @@ describe('Pagination', function () {
     assert.equal(React.findDOMNode(pageButtons[7]).innerText, '»');
 
   });
+
+  it('Should enumerate pagenums correctly when ellipsis=true', function () {
+    const instance = ReactTestUtils.renderIntoDocument(
+      <Pagination
+        first
+        last
+        prev
+        next
+        ellipsis
+        maxButtons={5}
+        activePage={1}
+        items={1} />
+    );
+    const pageButtons = ReactTestUtils.scryRenderedDOMComponentsWithTag(instance, 'li');
+
+    assert.equal(React.findDOMNode(pageButtons[0]).innerText, '«');
+    assert.equal(React.findDOMNode(pageButtons[1]).innerText, '‹');
+    assert.equal(React.findDOMNode(pageButtons[2]).innerText, '1');
+    assert.equal(React.findDOMNode(pageButtons[3]).innerText, '›');
+    assert.equal(React.findDOMNode(pageButtons[4]).innerText, '»');
+  });
+
+  it('Should render next and last buttons as disabled when items=0 and ellipsis=true', function () {
+    const instance = ReactTestUtils.renderIntoDocument(
+      <Pagination
+        last
+        next
+        ellipsis
+        maxButtons={1}
+        activePage={1}
+        items={0} />
+    );
+    const pageButtons = ReactTestUtils.scryRenderedDOMComponentsWithTag(instance, 'li');
+
+    assert.equal(React.findDOMNode(pageButtons[0]).innerText, '›');
+    assert.equal(React.findDOMNode(pageButtons[1]).innerText, '»');
+
+    assert.include(React.findDOMNode(pageButtons[0]).className, 'disabled');
+    assert.include(React.findDOMNode(pageButtons[1]).className, 'disabled');
+  });
+
+  it('Should wrap buttons in SafeAnchor when no buttonComponentClass prop is supplied', function () {
+    let instance = ReactTestUtils.renderIntoDocument(
+      <Pagination
+        maxButtons={2}
+        activePage={1}
+        items={2} />
+    );
+    let pageButtons = ReactTestUtils.scryRenderedDOMComponentsWithTag(instance, 'li');
+
+    let tagName = 'A';
+
+    assert.equal(React.findDOMNode(pageButtons[0]).children[0].tagName, tagName);
+    assert.equal(React.findDOMNode(pageButtons[1]).children[0].tagName, tagName);
+
+    assert.equal(React.findDOMNode(pageButtons[0]).children[0].getAttribute('href'), '');
+    assert.equal(React.findDOMNode(pageButtons[1]).children[0].getAttribute('href'), '');
+  });
+
+  it('Should wrap each button in a buttonComponentClass when it is present', function () {
+    class DummyElement extends React.Component {
+      render() {
+        return <div {...this.props}/>;
+      }
+    }
+
+    let instance = ReactTestUtils.renderIntoDocument(
+      <Pagination
+        maxButtons={2}
+        activePage={1}
+        items={2}
+        buttonComponentClass={DummyElement} />
+    );
+    let pageButtons = ReactTestUtils.scryRenderedDOMComponentsWithTag(instance, 'li');
+
+    let tagName = 'DIV';
+
+    assert.equal(React.findDOMNode(pageButtons[0]).children[0].tagName, tagName);
+    assert.equal(React.findDOMNode(pageButtons[1]).children[0].tagName, tagName);
+  });
+
+  it('Should call onSelect with custom buttonComponentClass', function (done) {
+    class DummyElement extends React.Component {
+      render() {
+        return <div {...this.props}/>;
+      }
+    }
+
+    function onSelect(event, selectedEvent) {
+      assert.equal(selectedEvent.eventKey, 3);
+      done();
+    }
+
+    let instance = ReactTestUtils.renderIntoDocument(
+      <Pagination items={5} onSelect={onSelect} buttonComponentClass={DummyElement}/>
+    );
+
+    ReactTestUtils.Simulate.click(
+      ReactTestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[2]
+    );
+  });
 });

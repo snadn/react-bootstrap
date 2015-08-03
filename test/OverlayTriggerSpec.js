@@ -39,6 +39,54 @@ describe('OverlayTrigger', function() {
     instance.state.isOverlayShown.should.be.true;
   });
 
+  it('Should maintain overlay classname', function() {
+    const instance = ReactTestUtils.renderIntoDocument(
+      <OverlayTrigger trigger='click' overlay={<div className='test-overlay'>test</div>}>
+        <button>button</button>
+      </OverlayTrigger>
+    );
+
+    const overlayTrigger = React.findDOMNode(instance);
+    ReactTestUtils.Simulate.click(overlayTrigger);
+
+    expect(document.getElementsByClassName('test-overlay').length).to.equal(1);
+  });
+
+  it('Should pass transition callbacks to Transition', function (done) {
+    let count = 0;
+    let increment = ()=> count++;
+
+    let overlayTrigger;
+
+    let instance = ReactTestUtils.renderIntoDocument(
+      <OverlayTrigger
+        trigger='click'
+        overlay={<div>test</div>}
+        onHide={()=>{}}
+        onExit={increment}
+        onExiting={increment}
+        onExited={()=> {
+          increment();
+          expect(count).to.equal(6);
+          done();
+        }}
+        onEnter={increment}
+        onEntering={increment}
+        onEntered={()=> {
+          increment();
+          ReactTestUtils.Simulate.click(overlayTrigger);
+        }}
+      >
+        <button>button</button>
+      </OverlayTrigger>
+    );
+
+    overlayTrigger = React.findDOMNode(instance);
+
+    ReactTestUtils.Simulate.click(overlayTrigger);
+  });
+
+
   it('Should forward requested context', function() {
     const contextTypes = {
       key: React.PropTypes.string
@@ -77,103 +125,6 @@ describe('OverlayTrigger', function() {
     ReactTestUtils.Simulate.click(overlayTrigger);
 
     contextSpy.calledWith('value').should.be.true;
-  });
-
-  describe('#calcOverlayPosition()', function() {
-    [
-      {
-        placement: 'left',
-        noOffset: [50, 300, null, '50%'],
-        offsetBefore: [-200, 150, null, '0%'],
-        offsetAfter: [300, 450, null, '100%']
-      },
-      {
-        placement: 'top',
-        noOffset: [200, 150, '50%', null],
-        offsetBefore: [50, -100, '0%', null],
-        offsetAfter: [350, 400, '100%', null]
-      },
-      {
-        placement: 'bottom',
-        noOffset: [200, 450, '50%', null],
-        offsetBefore: [50, 200, '0%', null],
-        offsetAfter: [350, 700, '100%', null]
-      },
-      {
-        placement: 'right',
-        noOffset: [350, 300, null, '50%'],
-        offsetBefore: [100, 150, null, '0%'],
-        offsetAfter: [600, 450, null, '100%']
-      }
-    ].forEach(function(testCase) {
-      describe(`placement = ${testCase.placement}`, function() {
-        let instance;
-
-        beforeEach(function() {
-          instance = ReactTestUtils.renderIntoDocument(
-            <OverlayTrigger
-              placement={testCase.placement}
-              containerPadding={50}
-              overlay={<div>test</div>}
-            >
-              <button>button</button>
-            </OverlayTrigger>
-          );
-
-          instance.getOverlayDOMNode = sinon.stub().returns({
-            offsetHeight: 200, offsetWidth: 200
-          });
-          instance._getContainerDimensions = sinon.stub().returns({
-            width: 600, height: 600, scroll: 100
-          });
-        });
-
-        function checkPosition(expected) {
-          const [
-            overlayLeft,
-            overlayTop,
-            arrowOffsetLeft,
-            arrowOffsetTop
-          ] = expected;
-
-          it('Should calculate the correct position', function() {
-            instance.calcOverlayPosition().should.eql(
-              {overlayLeft, overlayTop, arrowOffsetLeft, arrowOffsetTop}
-            );
-          });
-        }
-
-        describe('no viewport offset', function() {
-          beforeEach(function() {
-            instance.getPosition = sinon.stub().returns({
-              left: 250, top: 350, width: 100, height: 100
-            });
-          });
-
-          checkPosition(testCase.noOffset);
-        });
-
-        describe('viewport offset before', function() {
-          beforeEach(function() {
-            instance.getPosition = sinon.stub().returns({
-              left: 0, top: 100, width: 100, height: 100
-            });
-          });
-
-          checkPosition(testCase.offsetBefore);
-        });
-
-        describe('viewport offset after', function() {
-          beforeEach(function() {
-            instance.getPosition = sinon.stub().returns({
-              left: 500, top: 600, width: 100, height: 100
-            });
-          });
-
-          checkPosition(testCase.offsetAfter);
-        });
-      });
-    });
   });
 
   describe('overlay types', function() {
@@ -227,8 +178,8 @@ describe('OverlayTrigger', function() {
             <OverlayTrigger
               overlay={<div>test</div>}
               trigger='click' rootClose={testCase.rootClose}
-              >
-              <button>button</button>
+            >
+            <button>button</button>
             </OverlayTrigger>
           );
           const overlayTrigger = React.findDOMNode(instance);
@@ -236,12 +187,65 @@ describe('OverlayTrigger', function() {
         });
 
         it('Should have correct isOverlayShown state', function () {
-          const event = document.createEvent('HTMLEvents');
-          event.initEvent('click', true, true);
-          document.documentElement.dispatchEvent(event);
+          document.documentElement.click();
 
+          // Need to click this way for it to propagate to document element.
           instance.state.isOverlayShown.should.equal(testCase.shownAfterClick);
         });
+      });
+    });
+
+    describe('replaced overlay', function () {
+      let instance;
+
+      beforeEach(function () {
+        class ReplacedOverlay extends React.Component {
+          constructor(props) {
+            super(props);
+
+            this.handleClick = this.handleClick.bind(this);
+            this.state = {replaced: false};
+          }
+
+          handleClick() {
+            this.setState({replaced: true});
+          }
+
+          render() {
+            if (this.state.replaced) {
+              return (
+                <div>replaced</div>
+              );
+            } else {
+              return (
+                <div>
+                  <a id="replace-overlay" onClick={this.handleClick}>
+                    original
+                  </a>
+                </div>
+              );
+            }
+          }
+        }
+
+        instance = ReactTestUtils.renderIntoDocument(
+          <OverlayTrigger
+            overlay={<ReplacedOverlay />}
+            trigger='click' rootClose={true}
+          >
+            <button>button</button>
+          </OverlayTrigger>
+        );
+        const overlayTrigger = React.findDOMNode(instance);
+        ReactTestUtils.Simulate.click(overlayTrigger);
+      });
+
+      it('Should still be shown', function () {
+        // Need to click this way for it to propagate to document element.
+        const replaceOverlay = document.getElementById('replace-overlay');
+        replaceOverlay.click();
+
+        instance.state.isOverlayShown.should.be.true;
       });
     });
   });

@@ -1,7 +1,19 @@
 const tooltipInstance = (
-  <div style={{ height: 50 }}>
-    <Tooltip placement="right" positionLeft={150} positionTop={50}>
-      <strong>Holy guacamole!</strong> Check this info.
+  <div>
+    <Tooltip placement="right" className="in">
+      Tooltip right
+    </Tooltip>
+
+    <Tooltip placement="top" className="in">
+      Tooltip top
+    </Tooltip>
+
+    <Tooltip placement="left" className="in">
+      Tooltip left
+    </Tooltip>
+
+    <Tooltip placement="bottom" className="in">
+      Tooltip bottom
     </Tooltip>
   </div>
 );
