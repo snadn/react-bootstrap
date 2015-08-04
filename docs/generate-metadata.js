@@ -2,6 +2,11 @@ import metadata from 'react-component-metadata';
 import glob from 'glob';
 import fsp from 'fs-promise';
 import promisify from '../tools/promisify';
+import marked from 'marked';
+
+marked.setOptions({
+  xhtml: true
+});
 
 let globp = promisify(glob);
 
@@ -11,9 +16,10 @@ let cleanDoclets = desc => {
   return (idx === -1 ? desc : desc.substr(0, idx )).trim();
 };
 
-let cleanDocletValue = str => str.replace(/^\{/, '').replace(/\}$/, '');
+let cleanDocletValue = str => str.trim().replace(/^\{/, '').replace(/\}$/, '');
 
-let isLiteral = str => str.trim()[0] === '"' || str.trim()[0] === "'";
+
+let isLiteral = str => (/^('|")/).test(str.trim());
 
 /**
  * parse out description doclets to an object and remove the comment
@@ -21,8 +27,9 @@ let isLiteral = str => str.trim()[0] === '"' || str.trim()[0] === "'";
  * @param  {ComponentMetadata|PropMetadata} obj
  */
 function parseDoclets(obj){
-  obj.doclets = metadata.parseDoclets(obj.desc || '');
+  obj.doclets = metadata.parseDoclets(obj.desc || '') || {};
   obj.desc = cleanDoclets(obj.desc || '');
+  obj.descHtml = marked(obj.desc || '');
 }
 
 /**
