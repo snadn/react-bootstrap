@@ -14,7 +14,6 @@ import Header from './ModalHeader';
 import Title from './ModalTitle';
 import Footer from './ModalFooter';
 
-
 /**
  * Gets the correct clientHeight of the modal container
  * when the body/window/document you need to use the docElement clientHeight
@@ -30,11 +29,10 @@ function containerClientHeight(container, context) {
       : container.clientHeight;
 }
 
-function getContainer(context){
+function getContainer(context) {
   return (context.props.container && React.findDOMNode(context.props.container)) ||
     domUtils.ownerDocument(context).body;
 }
-
 
 let currentFocusListener;
 
@@ -52,7 +50,7 @@ function onFocus(context, handler) {
   let useFocusin = !doc.addEventListener;
   let remove;
 
-  if ( currentFocusListener ) {
+  if (currentFocusListener) {
     currentFocusListener.remove();
   }
 
@@ -71,8 +69,8 @@ function onFocus(context, handler) {
 
 let scrollbarSize;
 
-function getScrollbarSize(){
-  if ( scrollbarSize !== undefined ){
+function getScrollbarSize() {
+  if (scrollbarSize !== undefined) {
     return scrollbarSize;
   }
 
@@ -101,6 +99,7 @@ const Modal = React.createClass({
      * Include a backdrop component. Specify 'static' for a backdrop that doesn't trigger an "onHide" when clicked.
      */
     backdrop: React.PropTypes.oneOf(['static', true, false]),
+
     /**
      * Close the modal when escape key is pressed
      */
@@ -128,10 +127,21 @@ const Modal = React.createClass({
      * Consider leaving the default value here, as it is necessary to make the Modal work well with assistive technologies,
      * such as screen readers.
      */
-    enforceFocus: React.PropTypes.bool
+    enforceFocus: React.PropTypes.bool,
+
+    /**
+     * Hide this from automatic props documentation generation.
+     * @private
+     */
+    bsStyle: React.PropTypes.string,
+
+    /**
+     * When `true` The modal will show itself.
+     */
+    show: React.PropTypes.bool
   },
 
-  getDefaultProps(){
+  getDefaultProps() {
     return {
       bsClass: 'modal',
       dialogComponent: ModalDialog,
@@ -144,8 +154,10 @@ const Modal = React.createClass({
     };
   },
 
-  getInitialState(){
-    return {exited: !this.props.show};
+  getInitialState() {
+    return {
+      exited: !this.props.show
+    };
   },
 
   render() {
@@ -161,16 +173,16 @@ const Modal = React.createClass({
     }
 
     let modal = (
-      <Dialog {...props}
+      <Dialog
+        {...props}
         ref={this._setDialogRef}
-        className={classNames({ in: show && !animation })}
-        onClick={backdrop === true ? this.handleBackdropClick : null}
-      >
+        className={classNames(this.props.className, { in: show && !animation })}
+        onClick={backdrop === true ? this.handleBackdropClick : null}>
         { this.renderContent() }
       </Dialog>
     );
 
-    if ( animation ) {
+    if (animation) {
       modal = (
         <Fade
           transitionAppear
@@ -182,8 +194,7 @@ const Modal = React.createClass({
           onExited={this.handleHidden}
           onEnter={onEnter}
           onEntering={onEntering}
-          onEntered={onEntered}
-        >
+          onEntered={onEntered}>
           { modal }
         </Fade>
       );
@@ -221,14 +232,15 @@ const Modal = React.createClass({
       this.handleBackdropClick : null;
 
     let backdrop = (
-      <div ref="backdrop"
-       className={classNames(`${bsClass}-backdrop`, { in: this.props.show && !animation })}
-       onClick={onClick}
-      />
+      <div
+        ref="backdrop"
+        className={classNames(`${bsClass}-backdrop`, { in: this.props.show && !animation })}
+        onClick={onClick}/>
     );
 
     return (
-      <div ref='modal'>
+      <div
+        ref='modal'>
         { animation
             ? <Fade transitionAppear in={this.props.show} duration={duration}>{backdrop}</Fade>
             : backdrop
@@ -238,7 +250,7 @@ const Modal = React.createClass({
     );
   },
 
-  _setDialogRef(ref){
+  _setDialogRef(ref) {
     // issue #1074
     // due to: https://github.com/facebook/react/blob/v0.13.3/src/core/ReactCompositeComponent.js#L842
     //
@@ -266,14 +278,14 @@ const Modal = React.createClass({
     }
   },
 
-  componentWillUpdate(nextProps){
+  componentWillUpdate(nextProps) {
     if (nextProps.show) {
       this.checkForFocus();
     }
   },
 
   componentDidMount() {
-    if ( this.props.show ){
+    if (this.props.show) {
       this.onShow();
     }
   },
@@ -281,11 +293,10 @@ const Modal = React.createClass({
   componentDidUpdate(prevProps) {
     let { animation } = this.props;
 
-    if ( prevProps.show && !this.props.show && !animation) {
+    if (prevProps.show && !this.props.show && !animation) {
       //otherwise handleHidden will call this.
       this.onHide();
-    }
-    else if ( !prevProps.show && this.props.show ) {
+    } else if (!prevProps.show && this.props.show) {
       this.onShow();
     }
   },
@@ -375,8 +386,8 @@ const Modal = React.createClass({
     this.setState(this._getStyles());
   },
 
-  checkForFocus(){
-    if ( domUtils.canUseDom ) {
+  checkForFocus() {
+    if (domUtils.canUseDom) {
       try {
         this.lastFocus = document.activeElement;
       }
@@ -384,7 +395,7 @@ const Modal = React.createClass({
     }
   },
 
-  focusModalContent () {
+  focusModalContent() {
     let modalContent = React.findDOMNode(this.refs.dialog);
     let current = domUtils.activeElement(this);
     let focusInModal = current && domUtils.contains(modalContent, current);
@@ -395,7 +406,7 @@ const Modal = React.createClass({
     }
   },
 
-  restoreLastFocus () {
+  restoreLastFocus() {
     if (this.lastFocus && this.lastFocus.focus) {
       this.lastFocus.focus();
       this.lastFocus = null;
@@ -403,14 +414,14 @@ const Modal = React.createClass({
   },
 
   enforceFocus() {
-    if ( !this.isMounted() ) {
+    if (!this.isMounted()) {
       return;
     }
 
     let active = domUtils.activeElement(this);
     let modal = React.findDOMNode(this.refs.dialog);
 
-    if (modal && modal !== active && !domUtils.contains(modal, active)){
+    if (modal && modal !== active && !domUtils.contains(modal, active)) {
       modal.focus();
     }
   },
@@ -424,7 +435,9 @@ const Modal = React.createClass({
   },
 
   _getStyles() {
-    if ( !domUtils.canUseDom ) { return {}; }
+    if (!domUtils.canUseDom) {
+      return {};
+    }
 
     let node = React.findDOMNode(this.refs.modal);
     let scrollHt = node.scrollHeight;
