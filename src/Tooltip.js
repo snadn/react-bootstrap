@@ -12,7 +12,12 @@ const Tooltip = React.createClass({
      * @type {string}
      * @required
      */
-    id: CustomPropTypes.isRequiredForA11y(React.PropTypes.string),
+    id: CustomPropTypes.isRequiredForA11y(
+      React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ])
+    ),
 
     /**
      * Sets the direction the Tooltip is positioned towards.
@@ -60,8 +65,7 @@ const Tooltip = React.createClass({
     const style = {
       'left': this.props.positionLeft,
       'top': this.props.positionTop,
-      // we don't want to expose the `style` property
-      ...this.props.style // eslint-disable-line react/prop-types
+      ...this.props.style
     };
 
     const arrowStyle = {
@@ -70,7 +74,7 @@ const Tooltip = React.createClass({
     };
 
     return (
-        <div role='tooltip' {...this.props} className={classNames(this.props.className, classes)} style={style}>
+        <div role="tooltip" {...this.props} className={classNames(this.props.className, classes)} style={style}>
           <div className="tooltip-arrow" style={arrowStyle} />
           <div className="tooltip-inner">
             {this.props.children}

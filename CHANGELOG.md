@@ -1,3 +1,37 @@
+v0.25.1 - Fri, 28 Aug 2015 18:30:59 GMT
+---------------------------------------
+
+- [478300a](../../commit/478300a) [fixed] Handle falsey DropdownMenu  children correctly
+- [c450e96](../../commit/c450e96) [fixed] stop rendering extra attributes on Progress bar dom nodes
+- [3ceb7af](../../commit/3ceb7af) [fixed] allow null activeKey (empty) selection
+- [a7f93ae](../../commit/a7f93ae) [fixed] title is not passed to tab pane DOM node
+- [1bee466](../../commit/1bee466) [changed] 'id' prop-type made uniform throughout the project
+- [e438250](../../commit/e438250) [fixed] 'isRequireForA11y' undefined/null checking
+- [664b465](../../commit/664b465) [fixed] id passthrough for MenuItem
+
+
+
+v0.25.0 - Tue, 25 Aug 2015 18:56:33 GMT
+---------------------------------------
+
+- [8776128](../../commit/8776128) [fixed] Affix in IE10 - scrollHeight #1073
+- [adad32e](../../commit/adad32e) [added] PropType validation for headerRole and panelRole
+- [346501e](../../commit/346501e) [changed] DropdownButton, SplitButton, DropdownMenu, MenuItem completely rewritten
+- [653d2ff](../../commit/653d2ff) [changed] deprecate domUtils as a public API
+- [769781d](../../commit/769781d) [added] accessibility props for PanelGroup and Panels.
+- [5f0ac64](../../commit/5f0ac64) [added] Implements a generalized left-aligned version of tabs
+- [628d586](../../commit/628d586) [changed] deprecated Position, Transition, Portal
+- [03a6a61](../../commit/03a6a61) [changed] deprecated the Transition duration prop
+- [459ab0c](../../commit/459ab0c) [added] #460 ListGroupItem outputs <button> when an onClick handler is set.
+- [e482ede](../../commit/e482ede) [fixed] wrong tabs switching animation for 'Tabs' component
+- [b62e1f5](../../commit/b62e1f5) [fixed] wrong tabs switching animation for 'TabbedArea' component
+- [d0ff625](../../commit/d0ff625) [added] aria role "tablist" to the Nav on Tabs
+- [e7cf455](../../commit/e7cf455) [changed] New Tabs API
+- [f6d32c4](../../commit/f6d32c4) [changed] deprecate 'utils/CustomPropTypes' exporting
+- [caff9a0](../../commit/caff9a0) [removed] Factory support
+
+
+
 v0.24.5 - Fri, 14 Aug 2015 18:02:13 GMT
 ---------------------------------------
 
